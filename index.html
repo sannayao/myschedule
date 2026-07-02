@@ -1,162 +1,161 @@
-cd ~ && \
 cat << 'EOF' > index.html
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>夢婆班表小幫手</title>
+    <title>夢婆班表小幫手 v2.0</title>
     <style>
         :root {
             --primary-color: #6a5acd;
-            --bg-color: #f0f2f5;
+            --bg-color: #f4f7f6;
             --fixed-staff-bg: #e8f5e9;
-            --pt-staff-bg: #fff3e0;
+            --pt-staff-bg: #e3f2fd;
+            --off-day-bg: #f5f5f5;
+            --holiday-bg: #ffebee;
         }
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); color: #333; padding: 20px; margin: 0; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: var(--primary-color); margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 25px; font-weight: bold; }
-        
-        .config-section { background: #fafafa; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #eee; display: flex; flex-wrap: wrap; gap: 15px; }
-        .input-group { flex: 1 1 200px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 0.9em; }
+        .container { max-width: 1200px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary-color); }
+        .config-section { background: #fafafa; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #eee; }
+        .input-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; }
+        .input-group { flex: 1 1 180px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 0.9em; color: #555; }
         input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        
         .btn-group { text-align: center; margin-bottom: 30px; }
-        button { background: var(--primary-color); color: white; padding: 12px 40px; border: none; border-radius: 30px; font-size: 1.1em; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(106, 90, 205, 0.3); }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(106, 90, 205, 0.4); opacity: 0.9; }
-
-        .calendar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        button { background: var(--primary-color); color: white; padding: 12px 50px; border: none; border-radius: 30px; font-size: 1.1em; cursor: pointer; transition: 0.3s; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .weekday-header { background: var(--primary-color); color: white; padding: 10px; text-align: center; font-weight: bold; border-radius: 5px; }
-        .day-box { min-height: 120px; border: 1px solid #eee; border-radius: 8px; padding: 8px; background: #fff; transition: 0.2s; position: relative; }
-        .day-box:hover { border-color: var(--primary-color); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .date-num { font-size: 1.1em; font-weight: bold; margin-bottom: 8px; color: #444; border-bottom: 1px solid #f0f0f0; padding-bottom: 3px; }
-        .spacer { background-color: #f9f9f9; border: 1px dashed #ddd; opacity: 0.5; }
-        
+        .day-box { min-height: 140px; border: 1px solid #eee; border-radius: 8px; padding: 10px; background: #fff; position: relative; }
+        .date-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; margin-bottom: 8px; padding-bottom: 5px; }
+        .date-num { font-weight: bold; font-size: 1.1em; }
+        .status-select { font-size: 0.75em; padding: 2px; border-radius: 4px; border: 1px solid #ccc; }
+        .day-rest { background-color: var(--off-day-bg); color: #999; }
+        .day-temp-off { background-color: var(--holiday-bg); }
         .staff-tag { font-size: 0.85em; padding: 4px 6px; border-radius: 4px; margin-top: 4px; display: block; }
         .tag-fixed { background: var(--fixed-staff-bg); color: #2e7d32; border-left: 3px solid #2e7d32; }
-        .tag-pt { background: var(--pt-staff-bg); color: #ef6c00; border-left: 3px solid #ef6c00; font-weight: bold; }
-        .tag-none { background: #ffebee; color: #c62828; border-left: 3px solid #c62828; font-style: italic; }
-
-        @media (max-width: 768px) {
-            .calendar-grid { grid-template-columns: repeat(1, 1fr); }
-            .spacer { display: none; }
-        }
+        .tag-pt { background: var(--pt-staff-bg); color: #1565c0; border-left: 3px solid #1565c0; }
+        .tag-none { background: #ffebee; color: #c62828; border-left: 3px solid #c62828; font-size: 0.8em; }
+        .day-label { font-size: 0.75em; font-weight: bold; text-align: center; display: block; margin-top: 10px; }
+        @media (max-width: 900px) { .calendar-grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <h1>✨ 夢婆班表小幫手 ✨</h1>
-    <p class="subtitle">營業日專用：週二至週六 (週日、週一公休)</p>
-
+    <h1>✨ 夢婆班表小幫手 v2.0 ✨</h1>
     <div class="config-section">
-        <div class="input-group">
-            <label>📅 選擇排班月份</label>
-            <input type="month" id="scheduleMonth">
+        <div class="input-row">
+            <div class="input-group">
+                <label>📅 選擇月份</label>
+                <input type="month" id="scheduleMonth">
+            </div>
         </div>
-        <div class="input-group">
-            <label>🚫 兼職 A 禁排日 (如: 5,12)</label>
-            <input type="text" id="offA" placeholder="輸入日期數字">
-        </div>
-        <div class="input-group">
-            <label>🚫 兼職 B 禁排日</label>
-            <input type="text" id="offB" placeholder="輸入日期數字">
-        </div>
-        <div class="input-group">
-            <label>🚫 兼職 C 禁排日</label>
-            <input type="text" id="offC" placeholder="輸入日期數字">
+        <label>🚫 兼職禁排日期 (例如: 5,12)</label>
+        <div class="input-row">
+            <div class="input-group"><label>李葳</label><input type="text" id="off_李葳"></div>
+            <div class="input-group"><label>鈺杰</label><input type="text" id="off_鈺杰"></div>
+            <div class="input-group"><label>哲墉</label><input type="text" id="off_哲墉"></div>
+            <div class="input-group"><label>森喜</label><input type="text" id="off_森喜"></div>
+            <div class="input-group"><label>思岑</label><input type="text" id="off_思岑"></div>
         </div>
     </div>
-
     <div class="btn-group">
-        <button onclick="generateCalendar()">生成校正後班表</button>
+        <button onclick="generateCalendar()">生成雙人自動班表</button>
     </div>
-
     <div class="calendar-grid" id="calendarGrid"></div>
 </div>
-
 <script>
+    const ptNames = ['李葳', '鈺杰', '哲墉', '森喜', '思岑'];
+    let customStatuses = {}; 
+
     function generateCalendar() {
         const monthInput = document.getElementById('scheduleMonth').value;
         if (!monthInput) return alert('請選擇月份');
-
         const [year, month] = monthInput.split('-').map(Number);
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = '';
 
-        // 1. 插入星期標題
-        ['週二', '週三', '週四', '週五', '週六'].forEach(d => {
+        ['週日', '週一', '週二', '週三', '週四', '週五', '週六'].forEach(d => {
             const div = document.createElement('div');
             div.className = 'weekday-header';
             div.innerText = d;
             grid.appendChild(div);
         });
 
-        const firstDayOfMonth = new Date(year, month - 1, 1).getDay(); // 0(日) to 6(六)
+        const offDates = {};
+        ptNames.forEach(name => {
+            offDates[name] = document.getElementById(`off_${name}`).value.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        });
+
+        const firstDay = new Date(year, month - 1, 1).getDay();
         const daysInMonth = new Date(year, month, 0).getDate();
-        
-        // 禁排日期
-        const offDates = {
-            'A': document.getElementById('offA').value.split(',').map(s => parseInt(s.trim())),
-            'B': document.getElementById('offB').value.split(',').map(s => parseInt(s.trim())),
-            'C': document.getElementById('offC').value.split(',').map(s => parseInt(s.trim()))
-        };
+        const shiftCounts = {};
+        ptNames.forEach(name => shiftCounts[name] = 0);
 
-        const ptStaff = ['A', 'B', 'C'];
-        const shiftCounts = { 'A': 0, 'B': 0, 'C': 0 };
+        for (let i = 0; i < firstDay; i++) {
+            const spacer = document.createElement('div');
+            spacer.className = 'day-box';
+            spacer.style.opacity = '0.3';
+            grid.appendChild(spacer);
+        }
 
-        // 2. 處理第一週的位移 (位移邏輯修正)
-        // 我們的目標是：週二(2) 對應 Index 0, 週三(3) 對應 Index 1... 週六(6) 對應 Index 4
-        // 如果 1 號是週日(0)或週一(1)，它不顯示。
-        // 如果 1 號是週三(3)，我們要在前面補 1 個空格(週二)
-        
-        let startFilling = false;
-        
-        // 我們用一個簡單的循環來跑當月每一天，並正確計算它們在 5 欄格子的位置
         for (let day = 1; day <= daysInMonth; day++) {
             const dateObj = new Date(year, month - 1, day);
             const weekDay = dateObj.getDay();
-
-            // 如果這是當月第一天，且是週三~週六，我們需要先補空白
-            if (day === 1 && weekDay > 2 && weekDay <= 6) {
-                for (let s = 2; s < weekDay; s++) {
-                    const spacer = document.createElement('div');
-                    spacer.className = 'day-box spacer';
-                    grid.appendChild(spacer);
-                }
-            }
-
-            // 只處理週二(2) 到 週六(6)
-            if (weekDay >= 2 && weekDay <= 6) {
-                const dayBox = document.createElement('div');
-                dayBox.className = 'day-box';
-                
-                // 排班邏輯
-                let availablePt = ptStaff.filter(name => !offDates[name].includes(day));
-                availablePt.sort((a, b) => shiftCounts[a] - shiftCounts[b]);
-                
-                let selectedPt = availablePt.length > 0 ? availablePt[0] : null;
-                if (selectedPt) shiftCounts[selectedPt]++;
-
-                dayBox.innerHTML = `
-                    <div class="date-num">${month}/${day}</div>
-                    <div class="staff-tag tag-fixed">👤 Rin, 太乙</div>
-                    ${selectedPt ? 
-                        `<div class="staff-tag tag-pt">🌟 兼職: ${selectedPt}</div>` : 
-                        `<div class="staff-tag tag-none">❌ 無人可用</div>`}
-                `;
-                grid.appendChild(dayBox);
-            }
+            const dayBox = document.createElement('div');
+            dayBox.className = 'day-box';
+            
+            // 優先讀取自定義狀態，否則使用預設值
+            let status = customStatuses[day] || ((weekDay === 0 || weekDay === 1) ? 'rest' : 'work');
+            
+            renderDayContent(dayBox, month, day, weekDay, status, offDates, shiftCounts);
+            grid.appendChild(dayBox);
         }
     }
+
+    function renderDayContent(container, month, day, weekDay, status, offDates, shiftCounts) {
+        container.className = 'day-box';
+        if (status === 'rest') container.classList.add('day-rest');
+        if (status === 'temp-off') container.classList.add('day-temp-off');
+
+        let html = `
+            <div class="date-header">
+                <span class="date-num">${month}/${day}</span>
+                <select class="status-select" onchange="updateDayStatus(${day}, this.value)">
+                    <option value="work" ${status==='work'?'selected':''}>營業</option>
+                    <option value="rest" ${status==='rest'?'selected':''}>例行店休</option>
+                    <option value="temp-off" ${status==='temp-off'?'selected':''}>臨時店休</option>
+                </select>
+            </div>
+        `;
+
+        if (status === 'work') {
+            html += `<div class="staff-tag tag-fixed">👤 Rin, 太乙</div>`;
+            let availablePt = ptNames.filter(name => !offDates[name].includes(day));
+            availablePt.sort((a, b) => shiftCounts[a] - shiftCounts[b]);
+            let selected = availablePt.slice(0, 2);
+            selected.forEach(name => {
+                html += `<div class="staff-tag tag-pt">🌟 ${name}</div>`;
+                shiftCounts[name]++;
+            });
+            if (selected.length < 2) html += `<div class="staff-tag tag-none">⚠️ 人手不足</div>`;
+        } else {
+            html += `<span class="day-label">${status === 'rest' ? '☕ 例行店休' : '🚫 臨時店休'}</span>`;
+        }
+        container.innerHTML = html;
+    }
+
+    window.updateDayStatus = function(day, newStatus) {
+        customStatuses[day] = newStatus;
+        generateCalendar();
+    };
 
     const now = new Date();
     document.getElementById('scheduleMonth').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 </script>
-
 </body>
 </html>
 EOF
+
 python3 -m http.server 8080
